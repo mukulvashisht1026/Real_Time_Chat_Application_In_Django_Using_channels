@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>chatroom</title>
+	 <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+</head>
+<body>
+	
+<div><ul id="chat-items">
+	{% for i in msg %}
+	{% if i.sender != user %}
+	<p align="left"><h1><li>{{i.msg}}</li></h1></p>
+	{% else %}
+	<center><h1><li>{{i.msg}}</li></h1></center>
+	{% endif %}
+	{% endfor %}
+</ul>
+	<form id="form" method="post" action="{% url 'inbox' reciever_id=reciever_id %}">
+		{% csrf_token %}
+		<input type="hidden" id="myUsername" value="{{user.username}}">
+		<input type="text" name="msg" id="msg_input">
+		<button type="submit">SEND</button>
+	</form>
+
+</div>
+  <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script>
+  		var formData = $("#form")
+  		var msgInput = $("#msg_input")
+  		var chatHolder = $("#chat-items")
+  		var me = $("#myUsername").val()
+  		console.log(window.location)
+  		loc = window.location
+  		var wsStart = 'ws://'
+		
+		if (loc.protocol == 'https:'){
+			wsStart = 'wss://'
+		}
+		var endpoint = wsStart +window.location.host+window.location.pathname
+		var socket = new WebSocket(endpoint)
+
+		socket.onmessage =function(e){
+			console.log("message",e)
+			var chatDataMsg = JSON.parse(e.data)
+			chatHolder.append("<li>"+chatDataMsg.message+"  "+ chatDataMsg.username +"</li>")
+		}
+		socket.onopen=function(e){
+			console.log("open",e)
+			formData.submit(function(event){
+				event.preventDefault()
+				var msgText =msgInput.val()
+				chatHolder.append("<li>"+msgText+" via "+me+"</li>")
+				//var formDataSerialized = formData.serialize() we use this but it also send middleware something 
+				var finalData = {
+					'message':msgText
+				}
+				socket.send(JSON.stringify(finalData))
+				//msgInput.val('')
+				formData[0].reset()
+
+			})
+
+		}
+		socket.onerror=function(e){
+			console.log("error is",e)
+		}
+		socket.onclose=function(e){
+			console.log("close",e)
+		}
+  </script>
+	
+</body>
+</html>

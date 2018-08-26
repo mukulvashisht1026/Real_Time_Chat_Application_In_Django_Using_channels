@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>chatApp</title>
+</head>
+<body>
+<center><h1>welcome to chatroom</h1></center>
+
+<a href="{% url 'login' %}">click here for login</a>
+<a href="{% url 'signup' %}">click here for signup</a>
+{% block content %}
+
+
+{% endblock %}
+<footer>made by mukul vashisht</footer>
+</body>
+</html>

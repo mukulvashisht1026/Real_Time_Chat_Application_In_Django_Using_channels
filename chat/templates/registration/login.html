@@ -1,0 +1,12 @@
+{% extends 'chat/base.html' %}
+{% block content %}<div>
+	<center><h2>enter the login details</h2>
+	<form method="post" >
+		{% csrf_token %}
+		{{form.as_p}}
+		<button type="submit">submit</button>
+	</form>
+	</center>
+
+</div>
+{% endblock %}

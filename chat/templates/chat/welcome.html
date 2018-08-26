@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>chatroom 19</title>
+</head>
+<body>
+	<header><a href="{% url 'logout_1' %}">logout</a></header>
+<center><h1>welcome user you made it wonderfull </h1></center>
+<div>
+	<center>
+		
+		<div>
+			{% for i in users %}
+			<a href="{% url 'inbox' reciever_id=i.id %}"><br>{{i.username}}<br></a>
+
+			{% endfor %}
+
+		</div>
+	</center>
+
+
+</div>
+</body>
+</html>
