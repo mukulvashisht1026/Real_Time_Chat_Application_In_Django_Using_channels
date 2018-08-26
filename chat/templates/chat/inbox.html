@@ -37,7 +37,7 @@
   		var formData = $("#form")
   		var msgInput = $("#msg_input")
   		var chatHolder = $("#chat-items")
-  		var me = $("#myUsername").val()
+  		var me = $("#myUsername").val( )
   		console.log(window.location)
   		loc = window.location
   		var wsStart = 'ws://'
@@ -58,14 +58,14 @@
 			formData.submit(function(event){
 				event.preventDefault()
 				var msgText =msgInput.val()
-				chatHolder.append("<li>"+msgText+" via "+me+"</li>")
+				//chatHolder.append("<li>"+msgText+" via "+me+"</li>")
 				//var formDataSerialized = formData.serialize() we use this but it also send middleware something 
 				var finalData = {
 					'message':msgText
 				}
 				socket.send(JSON.stringify(finalData))
-				//msgInput.val('')
-				formData[0].reset()
+				msgInput.val('')
+				//formData[0].reset()
 
 			})
 

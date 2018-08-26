@@ -20,6 +20,7 @@ def index(request):
 @login_required
 def logout_1(request):
 	logout(request)
+	return render(request,'chat/base.html',{})
 	
 
 @login_required

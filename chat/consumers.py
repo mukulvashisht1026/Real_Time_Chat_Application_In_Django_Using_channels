@@ -50,7 +50,15 @@ class ChatConsumer(AsyncConsumer):
 			'message':msg,
 			'username':username
 			}
+			#saveing to database
+
+			#me = self.scope['user']
+			#current_user=User.objects.get(username=me)
 			
+			#user_id = current_user.id
+			other_user_id = self.scope['url_route']['kwargs']['reciever_id']
+			reciever_ins = User.objects.get(id=other_user_id)
+			await self.create_chat_message(msg,reciever_ins,user)
 			# broadcast the message
 			await self.channel_layer.group_send(
 				self.chat_room,
@@ -75,3 +83,8 @@ class ChatConsumer(AsyncConsumer):
 	@database_sync_to_async
 	def get_messages(self,user_id,other_user):
 		return messageStore.manager.get_msg(user_id,other_user).last()
+
+
+	@database_sync_to_async
+	def create_chat_message(self,msg,sender,reciever):
+		return  messageStore.manager.create(msg=msg,sender=sender,reciever=reciever)
