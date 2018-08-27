@@ -2,6 +2,54 @@
 <html>
 <head>
 	<title>chatroom</title>
+	<style type="text/css">
+		
+		.chat{
+
+  position:relative;
+  margin:0 auto;
+word-wrap: break-word;
+  width:500px;
+  overflow:hidden;
+}
+.chat .messages{
+	word-wrap: break-word;
+  width:500px;
+  height:300px;
+  overflow:hidden;
+
+}
+.chat .messages:hover{
+  overflow-y:scroll;
+   word-wrap: break-word;
+    right: -17px;
+}
+.chat .messages > div{
+  padding:5px 5px 5px 5px ;
+
+  
+  margin: 5px 5px 5px 5px;
+  border-radius: 20px;
+  word-wrap: break-word;
+  background-color: #FFFFFF;
+  width: 300px;
+}
+.message_panel{
+	background-color: white;
+	width: 250px;
+	word-wrap: break-word;
+}
+#chat-items{
+	background-color: #DDD6CD;
+}
+
+#msgtag{
+
+	
+
+	padding: 10px 10px 10px 10px;
+}
+	</style>
 	 <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -10,24 +58,26 @@
 
 </head>
 <body>
-	
-<div><ul id="chat-items">
+	<center><div><h1>CHATROOM</h1></div></center>
+<center><div class="container chat">	
+<div><div id="chat-items" class="messages">
 	{% for i in msg %}
 	{% if i.sender != user %}
-	<p align="left"><h1><li>{{i.msg}}</li></h1></p>
+	<div class="msgtag" style="float: right;"><p id="message_panel"  align="left">{{i.msg}}</p></div>
 	{% else %}
-	<center><h1><li>{{i.msg}}</li></h1></center>
+	<div class="msgtag" style="float: left;"><p  id="message_panel" align="left" >{{i.msg}}</p></div>
 	{% endif %}
 	{% endfor %}
-</ul>
-	<form id="form" method="post" action="{% url 'inbox' reciever_id=reciever_id %}">
+</div></center>
+	<center><form id="form" method="post" action="{% url 'inbox' reciever_id=reciever_id %}">
 		{% csrf_token %}
 		<input type="hidden" id="myUsername" value="{{user.username}}">
 		<input type="text" name="msg" id="msg_input">
 		<button type="submit">SEND</button>
 	</form>
+	</center>
 
-</div>
+</div></div>
   <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -51,7 +101,15 @@
 		socket.onmessage =function(e){
 			console.log("message",e)
 			var chatDataMsg = JSON.parse(e.data)
-			chatHolder.append("<li>"+chatDataMsg.message+"  "+ chatDataMsg.username +"</li>")
+			var appendmsg="<div class="+"'msgtag'"+" style="+"'float: left;'"+"><p id= 'message_panel' align="+"left"+">"+chatDataMsg.message+"  "+ "</p>"+"</div>"
+			if (chatDataMsg.username == "{{user.username}}")
+			{
+			var appendmsg="<div class="+"'msgtag'"+" style="+"'float: right;'"+"><p id= 'message_panel' align="+"'left'"+">"+chatDataMsg.message+"  "+"</p>"+"</div>"
+			}
+			chatHolder.append(appendmsg)
+			var elmnt = document.getElementById("chat-items")
+//elmnt.scrollLeft += 50;
+elmnt.scrollTop += elmnt.scrollHeight;
 		}
 		socket.onopen=function(e){
 			console.log("open",e)
@@ -66,6 +124,7 @@
 				socket.send(JSON.stringify(finalData))
 				msgInput.val('')
 				//formData[0].reset()
+					
 
 			})
 
@@ -76,6 +135,10 @@
 		socket.onclose=function(e){
 			console.log("close",e)
 		}
+	var elmnt = document.getElementById("chat-items")
+//elmnt.scrollLeft += 50;
+elmnt.scrollTop += elmnt.scrollHeight;
+
   </script>
 	
 </body>
